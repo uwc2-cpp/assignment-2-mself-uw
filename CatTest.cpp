@@ -1,29 +1,61 @@
 #include "TestHarness.h"
+using namespace std;
 
-/* Cat (as in "concatenate"):
-** 1. Write the function cat() that takes two C-style strings (i.e., char*) arguments 
-**    and returns a std::unique<char[]> that contains the concatenation of the arguments. 
-**    Use std::make_unique to use heap memory for the result. 
-**    Write CppUnitLite tests to verify correct behavior.
-** 2. Write a second function cat() that takes two const std::string& arguments and returns 
-**    a std::string that is a concatenation of the arguments. 
-**    The std::string version does not require new. 
-**    Write CppUnitLite tests to verify correct behavior.
-** 3. Which is the better approach? Explain your rationale for which is the better approach.
-*/
+void CountChars(const char* str, int& numChars)
+{
+    for (int i = 0; str[i] != '\0'; i++)
+    {
+        numChars++;
+    }
+}
 
-//void swap(int* n1, int* n2) //make this the appropriate function
-//{
-//
-//    //no peeking! your code goes here
-//
-//}
-//
-//TEST(ByPointerReference, Swap)
-//{
-//
-//    //your test code goes here
-//
-//    //add more test cases as needed
-//
-//}
+unique_ptr<char[]> Cat(const char* string_1, const char* string_2)
+{
+    int numChars = 0;
+    CountChars(string_1, numChars);
+    CountChars(string_2, numChars);
+
+    auto concatenatedString = make_unique<char[]>(sizeof(char*) * numChars);
+
+    for (;;)
+    {
+        int concatIndex = 0;
+        for (int i = 0; string_1[i] != '\0'; i++, concatIndex++)
+        {
+            concatenatedString[concatIndex] = string_1[i];
+        }
+        for (int i = 0; string_2[i] != '\0'; i++, concatIndex++)
+        {
+            concatenatedString[concatIndex] = string_2[i];
+        }
+        return concatenatedString;
+    }  
+}
+
+string Cat(const string& string1, const string& string2)
+{
+    return string1 + string2;
+}
+
+
+TEST(ConcatenateCharPointers, Concatenate)
+{
+    const char* string1 = "cheese";
+    const char* string2 = "burger";
+
+    unique_ptr<char[]> concatenatedString = Cat(string1, string2);
+
+    CHECK_EQUAL("cheeseburger", concatenatedString.get())
+}
+
+TEST(ConcatenateStrings, Concatenate)
+{
+    string string1 = "steak";
+    string string2 = "fries";
+
+    string concatenatedString = Cat(string1, string2);
+
+    CHECK_EQUAL("steakfries", concatenatedString)
+}
+
+//Utilizing the std::string over C style char* strings is preferrable. There is less chance for human error.

@@ -1,36 +1,40 @@
 #include "TestHarness.h"
 #include <optional>
+using namespace std;
 
-/* ParseInt: Implement the function: std::optional<int> ParseInt(const std::string& s); 
-** Verify your function implementation passes these two unit tests (below). 
-** Add an additional unit test that verifies use of std::optional::value_or().
-*/
+std::optional<int> ParseInt(const std::string& s)
+{
+    for (auto itr = s.begin(); itr != s.end(); ++itr)
+    {
+        if (isdigit(*itr))
+        {
+            return (optional<int>) stoi(s, nullptr);
+        }
+    }
+    return nullopt;
+}
 
-//std::optional<int> ParseInt(const std::string& s)
-//{
-//     
-//}
-//
-//TEST(ParseIntSuccess, Parse)
-//{
-//    auto result = ParseInt("99");
-//
-//    CHECK(result.has_value());
-//    CHECK_EQUAL(99, *result);
-//}
-//
-//TEST(ParseIntFailure, Parse)
-//{
-//    auto result = ParseInt("Hello");
-//
-//    CHECK(!result.has_value());
-//}
-//
-//TEST(ByPointerReference, Swap)
-//{
-//
-//    //your test code goes here
-//
-//    //add more test cases as needed
-//
-//}
+TEST(ParseIntSuccess, Parse)
+{
+    auto result = ParseInt("99");
+
+    CHECK(result.has_value());
+    CHECK_EQUAL(99, *result);
+}
+
+TEST(ParseIntFailure, Parse)
+{
+    auto result = ParseInt("Hello");
+
+    CHECK(!result.has_value());
+}
+
+TEST(Value_OR, Optional)
+{
+    auto hasInt = ParseInt("2022 is now");
+    CHECK_EQUAL(2022, hasInt.value_or(0));
+
+    auto noInt = ParseInt("Pickles");
+    CHECK_EQUAL(0, noInt.value_or(0));
+}
+
